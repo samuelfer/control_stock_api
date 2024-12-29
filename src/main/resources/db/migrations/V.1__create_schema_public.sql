@@ -397,8 +397,6 @@ CREATE TABLE public.usuario_privilegio (
     id bigint NOT NULL,
     privilegio_id bigint,
     usuario_id bigint,
-    privilegio bigint,
-    usuario bigint
 );
 
 
@@ -516,7 +514,7 @@ ALTER TABLE ONLY public.usuario_privilegio
     ADD CONSTRAINT usuario_privilegio_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY public.usuario_privilegio
-    ADD CONSTRAINT usuario_fk FOREIGN KEY (usuario) REFERENCES public.usuario(id);
+    ADD CONSTRAINT usuario_fk FOREIGN KEY (usuario_id) REFERENCES public.usuario(id);
 
 
 ALTER TABLE ONLY public.ordem
@@ -543,7 +541,7 @@ ALTER TABLE ONLY public.ordem
 
 
 ALTER TABLE ONLY public.usuario_privilegio
-    ADD CONSTRAINT usuario_privilegio_privilegio_fk FOREIGN KEY (privilegio) REFERENCES public.privilegio(id);
+    ADD CONSTRAINT usuario_privilegio_privilegio_fk FOREIGN KEY (privilegio_id) REFERENCES public.privilegio(id);
 
 
 ALTER TABLE ONLY public.secure_token
