@@ -50,19 +50,23 @@ public class UsuarioService {
         return usuarioRepository.findById(id).orElse(null);
     }
 
-    public Usuario updateUsuario(Usuario user, Long id){
-        return usuarioRepository.save(user);
+    public Usuario updateUsuario(Usuario usuario, Long id){
+        return usuarioRepository.save(usuario);
     }
 
-    public Usuario register(Usuario user) {
-        if(checkIfUserExist(user.getEmail())) {
-            throw new UserAlreadyExistException("User already exists for this email");
+    public Usuario register(Usuario usuario) {
+        if(checkIfUserExist(usuario.getEmail())) {
+            throw new UserAlreadyExistException("Já existe um usuário cadastrado com o email informado");
         }
-        user.setPasswordHash(bCryptPasswordEncoder.encode(user.getPassword()));
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        Usuario newUser = usuarioRepository.save(user);
-        sendRegistrationConfirmationEmail(user);
-        return newUser;
+        try {
+            usuario.setPasswordHash(bCryptPasswordEncoder.encode(usuario.getPassword()));
+            usuario.setPassword(bCryptPasswordEncoder.encode(usuario.getPassword()));
+            Usuario novoUsuario = usuarioRepository.save(usuario);
+            sendRegistrationConfirmationEmail(usuario);
+            return novoUsuario;
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     public boolean checkIfUserExist(String email){
@@ -89,6 +93,7 @@ public class UsuarioService {
         try {
             emailService.sendMail(emailContext);
         } catch (MessagingException e) {
+            System.out.println("Error "+e.getMessage());
             e.printStackTrace();
         }
     }
@@ -96,7 +101,7 @@ public class UsuarioService {
     public boolean verifyUsuario(String token) {
         SecureToken secureToken = secureTokenService.findByToken(token);
         if(Objects.isNull(secureToken) || !StringUtils.equals(token, secureToken.getToken()) || secureToken.isExpired()) {
-            throw new InvalidTokenException("Token expirado ou nãooo é válido");
+            throw new InvalidTokenException("Token expirado ou não é válido");
         }
 
         Usuario user = usuarioRepository.getOne(secureToken.getUsuario().getId());

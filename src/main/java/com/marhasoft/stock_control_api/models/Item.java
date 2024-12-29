@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.marhasoft.stock_control_api.security.models.Auditable;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Entity
@@ -16,6 +18,8 @@ public class Item extends Auditable<String> {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @NotBlank(message = "A descrição é obrigatória")
+    @Size(min = 4, message = "A descrição precisa ter no mínimo 4 caracteres")
     private String descricao;
 
     @ManyToOne
@@ -30,11 +34,12 @@ public class Item extends Auditable<String> {
     @JoinColumn(name = "fornecedor_id", insertable = false, updatable = false)
     private Fornecedor fornecedor;
 
-    @Column(length = 100)
+    @NotBlank(message = "A unidade de venda é obrigatória")
     private String unidadeVenda;
 
     private Float desconto = 0.0f;
 
+    @NotBlank(message = "O preço é obrigatório")
     private Float preco = 0.0f;
 
     private Short quantidade = 0;

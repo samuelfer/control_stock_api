@@ -35,13 +35,13 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest, HttpSession session) {
         try {
-            boolean isAuthenticated = authenticationService.authenticate(loginRequest.getUsername(), loginRequest.getPassword());
+            boolean isAuthenticated = authenticationService.authenticate(loginRequest.getLogin(), loginRequest.getPassword());
             if (isAuthenticated) {
-                Usuario usuario = usuarioService.getUsuarioByLogin(loginRequest.getUsername());
+                Usuario usuario = usuarioService.getUsuarioByLogin(loginRequest.getLogin());
                 UserPrincipal principal = new UserPrincipal(usuarioPrivilegioService, usuario);
                 Authentication authentication = new UsernamePasswordAuthenticationToken(usuario, null, principal.getAuthorities());
                 String jwtToken = tokenService.generateToken(authentication);
-                session.setAttribute("usuario", loginRequest.getUsername());
+                session.setAttribute("usuario", loginRequest.getLogin());
                 return ResponseEntity.ok(jwtToken);
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login ou senha inválidos");

@@ -31,12 +31,12 @@ public class RegistrationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Usuario> register(@Valid @RequestBody Usuario usuario) {
-        Usuario usuarioSalvo = usuarioService.register(usuario);
-        if (usuarioSalvo != null) {
+    public ResponseEntity<?> register(@Valid @RequestBody Usuario usuario) {
+        try {
+            Usuario usuarioSalvo = usuarioService.register(usuario);
             return ResponseEntity.status(HttpStatus.CREATED).body(usuarioSalvo);
-        } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // 400 Bad Request
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 

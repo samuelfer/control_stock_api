@@ -2,6 +2,7 @@ package com.marhasoft.stock_control_api.models;
 
 import com.marhasoft.stock_control_api.security.models.Auditable;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Entity
@@ -13,10 +14,9 @@ public class Produto extends Auditable<String> {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(nullable = false, length = 75)
+    @NotBlank(message = "O nome é obrigatório")
     private String nome;
 
-    @Column(columnDefinition = "TEXT")
     private String descricao;
 
     @ManyToOne()

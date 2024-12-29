@@ -3,7 +3,9 @@ package com.marhasoft.stock_control_api.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.marhasoft.stock_control_api.security.models.Auditable;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import lombok.NonNull;
 
 import java.util.List;
 
@@ -18,19 +20,14 @@ public class Ordem extends Auditable<String> {
 
     private String descricao;
 
-    @Column(nullable = false)
     private Float subTotal = 0.0f;
 
-    @Column(nullable = false)
     private Float itemDesconto = 0.0f;
 
-    @Column(nullable = false)
     private Float taxa = 0.0f;
 
-    @Column(nullable = false)
     private Float total = 0.0f;
 
-    @Column(length = 50)
     private String promocao;
 
     @Column(nullable = false)

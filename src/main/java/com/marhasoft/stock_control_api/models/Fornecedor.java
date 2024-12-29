@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.marhasoft.stock_control_api.security.models.Auditable;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,6 +23,9 @@ public class Fornecedor extends Auditable<String> {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
 	@Column(name="id")
 	private Long id;
+
+	@NotBlank(message = "O nome é obrigatório")
+	@Size(min = 4, message = "O nome precisa ter no mínimo 4 caracteres")
 	private String nome;
 	private String cnpj;
 	private String endereco;

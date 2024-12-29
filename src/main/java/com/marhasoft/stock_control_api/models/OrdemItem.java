@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.marhasoft.stock_control_api.security.models.Auditable;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Entity
@@ -24,13 +25,11 @@ public class OrdemItem extends Auditable<String> {
     @JoinColumn(name = "order_id", insertable = false, updatable = false)
     private Ordem ordem;
 
-    @Column(nullable = false)
     private Float desconto = 0.0f;
 
-    @Column(nullable = false)
+    @NotBlank(message = "A quantidade é obrigatória")
     private Short quantidade = 0;
 
-    @Column(columnDefinition = "TEXT")
     private String descricao;
 }
 
