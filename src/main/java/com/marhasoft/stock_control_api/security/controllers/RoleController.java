@@ -1,5 +1,6 @@
 package com.marhasoft.stock_control_api.security.controllers;
 
+import com.marhasoft.stock_control_api.models.Usuario;
 import com.marhasoft.stock_control_api.security.models.Privilegio;
 import com.marhasoft.stock_control_api.security.models.Role;
 import com.marhasoft.stock_control_api.security.repositories.PrivilegioRepository;
@@ -47,7 +48,8 @@ public class RoleController {
 
     @PostMapping("/role/{roleId}/assign/usuario/{usuarioId}")
     public void assignUserRole(@PathVariable("roleId") Long roleId, @PathVariable("usuarioId") Long usuarioId) {
-        roleService.assignUserRole(usuarioId, roleId);
+        Usuario usuario = usuarioService.getUsuarioByIdOrErro(usuarioId);
+        roleService.assignUserRole(usuario, roleId);
     }
 
     @Transactional

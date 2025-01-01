@@ -4,6 +4,7 @@ import com.marhasoft.stock_control_api.models.Usuario;
 import com.marhasoft.stock_control_api.security.models.Role;
 import com.marhasoft.stock_control_api.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,40 +21,40 @@ public class UsuarioController {
     }
 
     @GetMapping
-    public List<Usuario> getUsuarios(){
-        return usuarioService.getAllUsers();
+    @PreAuthorize("hasAuthority('VIEW_USUARIO')")
+    public List<Usuario> getAll(){
+        return usuarioService.getAllUsuarios();
     }
 
     @GetMapping("/username/{login}")
-    public Usuario getUsuarioByUsername(@PathVariable("login") String login){
+    @PreAuthorize("hasAuthority('VIEW_USUARIO')")
+    public Usuario getByUsername(@PathVariable("login") String login){
         return usuarioService.getUsuarioByLogin(login);
     }
 
     @GetMapping("/{id}")
-    public Usuario getUsuario(@PathVariable("id") Long id){
-        return usuarioService.getUserById(id);
+    @PreAuthorize("hasAuthority('VIEW_USUARIO')")
+    public Usuario getById(@PathVariable("id") Long id){
+        return usuarioService.getUsuarioById(id);
     }
 
 
     @PutMapping("/{id}")
-    public Usuario updateUsuario(@RequestBody() Usuario usuario, @PathVariable("id") Long id){
+    @PreAuthorize("hasAuthority('UPDATE_USUARIO')")
+    public Usuario update(@RequestBody() Usuario usuario, @PathVariable("id") Long id){
         return usuarioService.updateUsuario(usuario, id);
     }
 
-//    @PostMapping("/users")
-//    public ResponseEntity<User> addNew(@RequestBody() User user){
-//        User newUser = userService.register(user);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
-//    }
-
     @DeleteMapping("/{id}")
-    public void deleteUsuario(@PathVariable("id") Long id){
+    @PreAuthorize("hasAuthority('DELETE_USUARIO')")
+    public void delete(@PathVariable("id") Long id){
         usuarioService.deleteUsuario(id);
     }
 
     @PutMapping("/{id}/roles")
+    @PreAuthorize("hasAuthority('UPDATE_USUARIO')")
     public Usuario updateUsuario(@RequestBody() List<Role> roles, @PathVariable("id") Long id){
-        Usuario usuario = usuarioService.getUserById(id);
+        Usuario usuario = usuarioService.getUsuarioById(id);
         return usuarioService.updateUsuario(usuario, id);
     }
 }

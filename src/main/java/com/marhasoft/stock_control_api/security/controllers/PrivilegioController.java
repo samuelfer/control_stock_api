@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-public class PrivilegeController {
+@RequestMapping("/privilegios")
+public class PrivilegioController {
 
     @Autowired
     private PrivilegioService privilegioService;
@@ -17,27 +18,27 @@ public class PrivilegeController {
     @Autowired
     private UsuarioService usuarioService;
 
-    @GetMapping("/privileges")
-    public List<Privilegio> parameters() {
+    @GetMapping
+    public List<Privilegio> getAll() {
         return privilegioService.findAll();
     }
 
-    @GetMapping("/privilege/{id}")
+    @GetMapping("/{id}")
     public Privilegio getById(@PathVariable Integer id) {
         return privilegioService.getById(id);
     }
 
-    @PutMapping("/privilege/{id}")
-    public Privilegio updatePrivilege(@RequestBody() Privilegio privilegio, @PathVariable("id") Long id){
+    @PutMapping("/{id}")
+    public Privilegio updatePrivilegio(@RequestBody() Privilegio privilegio, @PathVariable("id") Long id){
         return privilegioService.save(privilegio);
     }
 
-    @PostMapping("/privileges")
+    @PostMapping
     public Privilegio save(Privilegio privilegio) {
         return privilegioService.save(privilegio);
     }
 
-    @DeleteMapping("/privilege/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public void delete(@PathVariable Integer id) {
         privilegioService.delete(id);
     }

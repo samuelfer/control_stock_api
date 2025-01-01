@@ -1,5 +1,6 @@
 package com.marhasoft.stock_control_api.security.services;
 
+import com.marhasoft.stock_control_api.models.Usuario;
 import com.marhasoft.stock_control_api.repositories.UsuarioRepository;
 import com.marhasoft.stock_control_api.security.models.Privilegio;
 import com.marhasoft.stock_control_api.security.models.Role;
@@ -48,15 +49,15 @@ public class RoleService {
         return roleRepository.save(role);
     }
 
-    public void assignUserRole(Long userId, Long roleId) {
+    public void assignUserRole(Usuario usuario, Long roleId) {
         List<Privilegio> privileges = privilegioRepository.findByRoleId(roleId);
 
-        List<UsuarioPrivilegio> existingUPrivilegio = usuarioPrivilegioRepository.findByUsuarioId(userId);
+        List<UsuarioPrivilegio> existingUPrivilegio = usuarioPrivilegioRepository.findByUsuarioId(usuario.getId());
 
         usuarioPrivilegioRepository.deleteAll(existingUPrivilegio);
 
         List<UsuarioPrivilegio> assignments  = privileges.stream()
-                .map(privilege -> new UsuarioPrivilegio(userId, privilege.getId()))
+                .map(privilege -> new UsuarioPrivilegio(usuario, privilege))
                 .toList();
 
         usuarioPrivilegioRepository.saveAll(assignments);

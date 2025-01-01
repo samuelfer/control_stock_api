@@ -42,14 +42,21 @@ public class UsuarioService {
         this.emailService = emailService;
     }
 
-    public List<Usuario> getAllUsers(){
+    public List<Usuario> getAllUsuarios(){
         return usuarioRepository.findAll();
     }
 
-    public Usuario getUserById(Long id) {
+    public Usuario getUsuarioById(Long id) {
         return usuarioRepository.findById(id).orElse(null);
     }
 
+    public Usuario getUsuarioByIdOrErro(Long usuarioId) {
+        Usuario usuario = getUsuarioById(usuarioId);
+        if (usuario == null) {
+            throw new RuntimeException("Usuário não encontrado");
+        }
+        return usuario;
+    }
     public Usuario updateUsuario(Usuario usuario, Long id){
         return usuarioRepository.save(usuario);
     }

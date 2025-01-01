@@ -4,6 +4,7 @@ import com.marhasoft.stock_control_api.models.Usuario;
 import com.marhasoft.stock_control_api.security.models.Privilegio;
 import com.marhasoft.stock_control_api.security.models.UsuarioPrivilegio;
 import com.marhasoft.stock_control_api.security.services.UsuarioPrivilegioService;
+import com.marhasoft.stock_control_api.services.UsuarioService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,40 +15,41 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@Transactional
+@RequestMapping("/usuario-privilegios")
 public class UsuarioPrivilegioController {
 
     @Autowired
     private UsuarioPrivilegioService usuarioPrivilegioService;
+    @Autowired
+    private UsuarioService usuarioService;
 
-    @GetMapping("/userPrivilegeAssignments")
-    public List<UsuarioPrivilegio> parameters(Model model) {
+    @GetMapping
+    public List<UsuarioPrivilegio> getAll() {
         return usuarioPrivilegioService.findAll();
     }
 
-    @GetMapping("/usuarioprivilegio/{id}")
+    @GetMapping("/{id}")
     public UsuarioPrivilegio getById(@PathVariable Long id) {
         return usuarioPrivilegioService.getById(id);
     }
 
-    @PostMapping("/usuarioprivilegios")
+    @PostMapping
     public UsuarioPrivilegio save(@RequestBody UsuarioPrivilegio usuarioPrivilegio) {
         return usuarioPrivilegioService.save(usuarioPrivilegio);
     }
 
-    @DeleteMapping("/usuarioprivilegio/{id}")
+    @DeleteMapping("/{id}")
     public void deleteUsuarioPrivilegio(@PathVariable("id") Long id){
         usuarioPrivilegioService.delete(id);
     }
 
-    @Transactional
     @PostMapping("/usuario/{usuarioId}/privilegios")
-    public ResponseEntity<String> savePrivileges(@PathVariable("usuarioId") Long usuarioId, @RequestBody List<Privilegio> privilegios) {
+    @Transactional
+    public ResponseEntity<String> salvaPrivilegiosToUsuario(@PathVariable("usuarioId") Long usuarioId, @RequestBody List<Privilegio> privilegios) {
        try {
-           List<Privilegio> privilegiosSalvo = usuarioPrivilegioService.savePrivilegios(
-                   privilegios, usuarioId
-           );
-           return ResponseEntity.status(HttpStatus.CREATED).body("Privilegios salvos com sucesso");
+           Usuario usuario = usuarioService.getUsuarioByIdOrErro(usuarioId);
+           usuarioPrivilegioService.savePrivilegios(privilegios, usuario);
+           return ResponseEntity.status(HttpStatus.CREATED).body("Privilégios salvos com sucesso");
        } catch (Exception ex) {
            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao tentar salvar: " + ex.getMessage());
        }
@@ -63,13 +65,13 @@ public class UsuarioPrivilegioController {
         return usuarioPrivilegioService.getUsuariosByPrivilegio(privilegioId);
     }
 
-    @DeleteMapping("/user/{userid}/privileges/clear")
-    public ResponseEntity<String> clearUserPrivileges(@PathVariable("userid") Long userid) {
+    @DeleteMapping("/usuario/{usuarioId}/privileges/clear")
+    public ResponseEntity<String> deletePrivilegioByUsuario(@PathVariable("usuarioId") Long usuarioId) {
         try {
-            usuarioPrivilegioService.deletePrivilegios(userid);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Privileges were cleared successfully");
+            usuarioPrivilegioService.deletePrivilegios(usuarioId);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Privilegio deletado com sucesso");
         } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred: " + ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao tentar deletar privilégio: " + ex.getMessage());
         }
     }
 

@@ -19,19 +19,15 @@ public class UsuarioPrivilegio {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "usuario", insertable = false, updatable = false)
+    @JoinColumn(name = "usuario_id")
     private Usuario usuario;
-    @Column(name = "usuario_id")
-    private Long usuarioId;
-
     @ManyToOne
-    @JoinColumn(name = "privilegio", insertable = false, updatable = false)
+    @JoinColumn(name = "privilegio_id")
     private Privilegio privilegio;
-    @Column(name = "privilegio_id")
-    private Long privilegioId;
 
-    public UsuarioPrivilegio(Long usuarioId, Long privilegioId) {
-        this.usuarioId = usuarioId;
-        this.privilegioId = privilegioId;
+
+    public UsuarioPrivilegio(Usuario usuario, Privilegio privilegio) {
+        this.usuario = usuario;
+        this.privilegio = privilegio;
     }
 }

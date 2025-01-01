@@ -41,11 +41,11 @@ public class UsuarioPrivilegioService {
     }
 
     @Transactional
-    public List<Privilegio> savePrivilegios(List<Privilegio> privileges, Long userid) {
-        repository.deleteByUsuarioId(userid);
+    public List<Privilegio> savePrivilegios(List<Privilegio> privileges, Usuario usuario) {
+//        deletePrivilegios(usuario.getId());
 
         List<UsuarioPrivilegio> assignments = privileges.stream()
-                .map(privilege -> new UsuarioPrivilegio(userid, privilege.getId()))
+                .map(privilege -> new UsuarioPrivilegio(usuario, privilege))
                 .toList();
 
         return repository.saveAll(assignments).stream()

@@ -23,11 +23,13 @@ public class MyUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        System.out.println("Entrei no MyUserDetailService");
         Usuario usuario = usuarioRepository.findByLogin(username);
 
         if(usuario == null) {
             throw  new UsernameNotFoundException("Usuário não encontrado na base de dados");
         }
+        System.out.println("Passei aqio");
         return new UserPrincipal(usuarioPrivilegioService, usuario);
     }
 }

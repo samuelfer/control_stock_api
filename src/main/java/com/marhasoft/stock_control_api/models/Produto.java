@@ -20,11 +20,11 @@ public class Produto extends Auditable<String> {
     private String descricao;
 
     @ManyToOne()
-    @JoinColumn(name = "subcategoria_id", insertable = false, updatable = false)
+    @JoinColumn(name = "subcategoria_id")
     private SubCategoria subCategoria;
 
     @ManyToOne()
-    @JoinColumn(name = "categoria_id", insertable = false, updatable = false)
+    @JoinColumn(name = "categoria_id")
     private Categoria categoria;
 }
 

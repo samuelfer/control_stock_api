@@ -8,9 +8,9 @@ import java.util.List;
 
 @Repository
 public interface UsuarioPrivilegioRepository extends JpaRepository<UsuarioPrivilegio, Long> {
-    public void deleteByUsuarioId(Long userId);
+    void deleteByUsuarioId(Long usuarioId);
 
-    public List<UsuarioPrivilegio> findByUsuarioId(Long userId);
+    List<UsuarioPrivilegio> findByUsuarioId(Long usuarioId);
 
-    public void deleteByUsuarioIdAndPrivilegioId(Long userid, Long privilegioId);
+    void deleteByUsuarioIdAndPrivilegioId(Long usuarioId, Long privilegioId);
 }

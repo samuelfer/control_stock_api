@@ -3,13 +3,14 @@ package com.marhasoft.stock_control_api.controllers;
 import com.marhasoft.stock_control_api.models.Item;
 import com.marhasoft.stock_control_api.services.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/itens")
 public class ItemController {
-
 
     private ItemService itemService;
 
@@ -18,28 +19,33 @@ public class ItemController {
         this.itemService = itemService;
     }
 
-    @GetMapping("/items")
-    public List<Item> getItemes(){
+    @GetMapping
+    @PreAuthorize("hasAuthority('VIEW_ITEM')")
+    public List<Item> getAll(){
         return itemService.getAllItems();
     }
 
-    @GetMapping("/item/{id}")
-    public Item getItem(@PathVariable("id") Long id){
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('VIEW_ITEM')")
+    public Item getById(@PathVariable("id") Long id){
         return itemService.getItemById(id);
     }
 
-    @PutMapping("/item/{id}")
-    public Item updateItem(@RequestBody() Item item, @PathVariable("id") Long id){
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('UPDATE_ITEM')")
+    public Item update(@RequestBody() Item item, @PathVariable("id") Long id){
         return itemService.save(item);
     }
 
-    @PostMapping("/items")
-    public Item addNew(@RequestBody() Item item){
+    @PostMapping
+    @PreAuthorize("hasAuthority('CREATE_ITEM')")
+    public Item create(@RequestBody() Item item){
         return itemService.save(item);
     }
 
-    @DeleteMapping("/item/{id}")
-    public void deleteItem(@PathVariable("id") Long id){
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('DELETE_ITEM')")
+    public void delete(@PathVariable("id") Long id){
         itemService.deleteItem(id);
     }
 }

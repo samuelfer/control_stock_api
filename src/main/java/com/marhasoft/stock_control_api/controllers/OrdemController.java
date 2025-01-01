@@ -3,6 +3,7 @@ package com.marhasoft.stock_control_api.controllers;
 import com.marhasoft.stock_control_api.models.Ordem;
 import com.marhasoft.stock_control_api.services.OrdemService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,27 +20,32 @@ public class OrdemController {
     }
 
     @GetMapping
-    public List<Ordem> getOrdens(){
+    @PreAuthorize("hasAuthority('VIEW_ORDEM')")
+    public List<Ordem> getAll(){
         return ordemService.getAllOrders();
     }
 
     @GetMapping("/{id}")
-    public Ordem getOrdem(@PathVariable("id") Long id){
+    @PreAuthorize("hasAuthority('VIEW_ORDEM')")
+    public Ordem getById(@PathVariable("id") Long id){
         return ordemService.getOrdemById(id);
     }
 
     @PutMapping("/{id}")
-    public Ordem updateOrdem(@RequestBody() Ordem ordem, @PathVariable("id") Long id){
+    @PreAuthorize("hasAuthority('UPDATE_ORDEM')")
+    public Ordem update(@RequestBody() Ordem ordem, @PathVariable("id") Long id){
         return ordemService.save(ordem);
     }
 
     @PostMapping
-    public Ordem addNew(@RequestBody() Ordem ordem){
+    @PreAuthorize("hasAuthority('create_ORDEM')")
+    public Ordem create(@RequestBody() Ordem ordem){
         return ordemService.save(ordem);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteOrdem(@PathVariable("id") Long id){
+    @PreAuthorize("hasAuthority('DELETE_ORDEM')")
+    public void delete(@PathVariable("id") Long id){
         ordemService.deleteOrdem(id);
     }
 }

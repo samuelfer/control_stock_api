@@ -3,6 +3,7 @@ package com.marhasoft.stock_control_api.controllers;
 import com.marhasoft.stock_control_api.models.Produto;
 import com.marhasoft.stock_control_api.services.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,27 +20,32 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<Produto> getProdutos(){
+    @PreAuthorize("hasAuthority('VIEW_PRODUTO')")
+    public List<Produto> getAll(){
         return produtoService.getAllProdutos();
     }
 
     @GetMapping("/{id}")
-    public Produto getProduto(@PathVariable("id") Long id){
+    @PreAuthorize("hasAuthority('VIEW_PRODUTO')")
+    public Produto getById(@PathVariable("id") Long id){
         return produtoService.getProdutoById(id);
     }
 
     @PutMapping("/{id}")
-    public Produto updateProduto(@RequestBody() Produto product, @PathVariable("id") Long id){
-        return produtoService.updateProduto(product);
+    @PreAuthorize("hasAuthority('UPDATE_PRODUTO')")
+    public Produto update(@RequestBody() Produto produto, @PathVariable("id") Long id){
+        return produtoService.updateProduto(produto);
     }
 
     @PostMapping
-    public Produto addNew(@RequestBody() Produto produto){
+    @PreAuthorize("hasAuthority('CREATE_PRODUTO')")
+    public Produto create(@RequestBody() Produto produto){
         return produtoService.save(produto);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteProduto(@PathVariable("id") Long id){
+    @PreAuthorize("hasAuthority('DELETE_PRODUTO')")
+    public void delete(@PathVariable("id") Long id){
         produtoService.deleteProduto(id);
     }
 }
