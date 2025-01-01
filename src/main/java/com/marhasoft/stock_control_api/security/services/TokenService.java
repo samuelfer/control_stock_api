@@ -1,5 +1,6 @@
 package com.marhasoft.stock_control_api.security.services;
 
+import com.marhasoft.stock_control_api.security.models.UserPrincipal;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -20,9 +21,9 @@ public class TokenService {
         this.jwtEncoder = jwtEncoder;
     }
 
-    public String generateToken(Authentication authentication){
+    public String generateToken(UserPrincipal principal, Authentication authentication){
         Instant now = Instant.now();
-        String scope = authentication.getAuthorities()
+        String authorities = authentication.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(" "));
@@ -31,7 +32,9 @@ public class TokenService {
                 .issuer("self")
                 .issuedAt(now)
                 .expiresAt(now.plus(1, ChronoUnit.HOURS))
-                .claim("scope", scope)
+                .claim("usuarioId", principal.getUsuarioId())
+                .claim("usuarioEmail", principal.getEmail())
+                .claim("authorities", authorities)
                 .build();
 
         return this.jwtEncoder.encode(JwtEncoderParameters.from(claimsSet)).getTokenValue();

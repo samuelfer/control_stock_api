@@ -16,8 +16,7 @@ import java.util.*;
 @Entity
 @Table(name = "usuario", uniqueConstraints = {
         @UniqueConstraint(columnNames = "email"),
-        @UniqueConstraint(columnNames = "mobile"),
-        @UniqueConstraint(columnNames = "username")
+        @UniqueConstraint(columnNames = "login")
 })
 @Data
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
@@ -33,10 +32,12 @@ public class Usuario extends Auditable<String> {
 
     @NotBlank(message = "O login é obrigatório")
     @Size(min = 4, message = "O login precisa ter no mínimo 4 caracteres")
+    @Column(unique = true)
     private String login;
 
     @NotBlank(message = "O email é obrigatório")
     @Email(message = "E-mail deve ser válido")
+    @Column(unique = true)
     private String email;
 
     private String imagemUrl;

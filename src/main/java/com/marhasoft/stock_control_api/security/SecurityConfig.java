@@ -1,5 +1,6 @@
 package com.marhasoft.stock_control_api.security;
 
+import com.marhasoft.stock_control_api.security.services.MyUserDetailsService;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -9,9 +10,11 @@ import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -22,12 +25,15 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @EnableWebSecurity
 @Configuration
+@EnableMethodSecurity // Para usar anotações como @PreAuthorize
 public class SecurityConfig  {
 
     private final RsaKeyProperties properties;
@@ -53,8 +59,12 @@ public class SecurityConfig  {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+
                         // Libera os endpoints do Swagger
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/usuario-privilegios/**", "/api/v1/usuario-privilegios/**").permitAll()
+                        .requestMatchers("/privilegios/**", "/api/v1/privilegios/**").permitAll()
+                        .requestMatchers("/roles", "/api/v1/roles/**").permitAll()
                         // Libera outros endpoints públicos
                         .requestMatchers("/register", "/api/v1/register").permitAll()
                         .requestMatchers("/login",  "/api/v1/login").permitAll()
@@ -68,7 +78,7 @@ public class SecurityConfig  {
     }
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private MyUserDetailsService myUserDetailsService;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
@@ -78,7 +88,7 @@ public class SecurityConfig  {
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
+        provider.setUserDetailsService(myUserDetailsService);
         provider.setPasswordEncoder(bCryptPasswordEncoder());
         return provider;
     }
@@ -97,5 +107,16 @@ public class SecurityConfig  {
         };
     }
 
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        // Remova o prefixo SCOPE_
+        grantedAuthoritiesConverter.setAuthorityPrefix("");
+
+        JwtAuthenticationConverter authenticationConverter = new JwtAuthenticationConverter();
+        authenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+
+        return authenticationConverter;
+    }
 
 }

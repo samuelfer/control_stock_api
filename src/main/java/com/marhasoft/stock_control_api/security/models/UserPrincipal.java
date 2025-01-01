@@ -22,7 +22,6 @@ public class UserPrincipal implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<Privilegio> privilegeList = usuarioPrivilegioService.getUsuarioPrivilegios(usuario.getId());
-
         return privilegeList.stream()
                 .map(privilege -> new SimpleGrantedAuthority(privilege.getDescricao()))
                 .collect(Collectors.toList());
@@ -56,5 +55,12 @@ public class UserPrincipal implements UserDetails {
     @Override
     public boolean isEnabled() {
         return usuario.isAccountVerified();
+    }
+
+    public Long getUsuarioId() {
+        return usuario.getId();
+    }
+    public String getEmail() {
+        return usuario.getEmail();
     }
 }
