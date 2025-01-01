@@ -30,8 +30,8 @@ public class AuthenticationService {
             throw new UsernameNotFoundException("Usuário não encontrado na base de dados");
         }
 
-        if(usuario.getPasswordHash().equals(bCryptPasswordEncoder.encode(password))) {
-            throw new BadCredentialsException("Senha incorreta");
+        if(!usuario.getPasswordHash().equals(bCryptPasswordEncoder.encode(password))) {
+            throw new BadCredentialsException("Usuário ou Senha incorretos");
         }
         return true;
     }

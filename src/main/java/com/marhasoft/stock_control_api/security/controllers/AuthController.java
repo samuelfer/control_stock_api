@@ -40,14 +40,14 @@ public class AuthController {
                 Usuario usuario = usuarioService.getUsuarioByLogin(loginRequest.getLogin());
                 UserPrincipal principal = new UserPrincipal(usuarioPrivilegioService, usuario);
                 Authentication authentication = new UsernamePasswordAuthenticationToken(usuario, null, principal.getAuthorities());
-                String jwtToken = tokenService.generateToken(authentication);
+                String jwtToken = tokenService.generateToken(principal, authentication);
                 session.setAttribute("usuario", loginRequest.getLogin());
                 return ResponseEntity.ok(jwtToken);
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login ou senha inválidos");
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ocorreu um erro durante o login");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
